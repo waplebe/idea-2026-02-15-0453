@@ -18,6 +18,16 @@ def main():
         for task in args.task:
             f.write(f"{task}\n")
 
+    # Load tasks from file on startup
+    try:
+        with open("todo.txt", "r") as f:
+            tasks = [line.strip() for line in f.readlines()]
+            print("\nLoaded tasks from file:")
+            for task in tasks:
+                print(f"- {task}")
+    except FileNotFoundError:
+        pass
+
 
 if __name__ == "__main__":
     main()
