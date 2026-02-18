@@ -46,6 +46,26 @@ def main():
         except FileNotFoundError:
             pass
 
+    # Mark tasks as complete
+    if args.complete:
+        try:
+            with open("todo.txt", "r") as f:
+                tasks = [line.strip() for line in f.readlines()]
+            
+            for task_num in args.complete:
+                task_index = int(task_num) - 1
+                if 0 <= task_index < len(tasks):
+                    tasks[task_index] = "[X] " + tasks[task_index]
+            
+            with open("todo.txt", "w") as f:
+                for task in tasks:
+                    f.write(task + "\n")
+            print("\nTasks marked as complete.")
+        except FileNotFoundError:
+            pass
+        except ValueError:
+            print("Invalid task number for completion.")
+
 
 if __name__ == "__main__":
     main()

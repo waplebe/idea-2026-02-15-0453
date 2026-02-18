@@ -58,3 +58,9 @@ python main.py
 # Clear the list
 python main.py
 ```
+
+## New Features
+
+*   **Task Completion:**  Tasks can now be marked as complete using the `-c` flag. Completed tasks are indicated with a `[X]` prefix in the output and saved to the `todo.txt` file.
+*   **Robust Error Handling:**  The script now handles cases where the task number provided for completion is invalid or out of range, and when the `todo.txt` file is not found.
+*   **Comprehensive Testing:**  A suite of unit tests has been added to ensure the functionality of the script, including adding tasks, completing tasks, loading tasks, clearing the list, and handling invalid input.

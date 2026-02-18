@@ -46,5 +46,18 @@ class TestMain(unittest.TestCase):
         main.main()
         self.assertEqual(print("No tasks provided."), None)
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_complete_task_nonexistent(self):
+        main.main(["task1", "task2"])
+        main.main("-c 5 task1")
+        with open("todo.txt", "r") as f:
+            tasks = f.readlines()
+        self.assertEqual(tasks[0].strip(), "task1\n")
+        self.assertEqual(tasks[1].strip(), "task2\n")
+
+    def test_complete_task_invalid_number(self):
+        main.main(["task1", "task2"])
+        main.main("-c abc task1")
+        with open("todo.txt", "r") as f:
+            tasks = f.readlines()
+        self.assertEqual(tasks[0].strip(), "task1\n")
+        self.assertEqual(tasks[1].strip(), "task2\n")
