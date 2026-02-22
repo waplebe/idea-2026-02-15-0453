@@ -1,6 +1,7 @@
 import unittest
 import main
 import os
+import json
 
 class TestMain(unittest.TestCase):
 
@@ -16,30 +17,34 @@ class TestMain(unittest.TestCase):
     def test_add_tasks(self):
         main.main(["task1", "task2"])
         with open("todo.txt", "r") as f:
-            tasks = f.readlines()
-        self.assertEqual(tasks[0].strip(), "task1\n")
-        self.assertEqual(tasks[1].strip(), "task2\n")
+            tasks = json.load(f)
+        self.assertEqual(len(tasks), 2)
+        self.assertEqual(tasks[0]["task"], "task1")
+        self.assertEqual(tasks[1]["task"], "task2")
 
     def test_complete_task(self):
         main.main(["task1", "task2"])
         main.main("-c 1 task1")
         with open("todo.txt", "r") as f:
-            tasks = f.readlines()
-        self.assertEqual(tasks[0].strip(), "[X] task1\n")
-        self.assertEqual(tasks[1].strip(), "task2\n")
+            tasks = json.load(f)
+        self.assertEqual(len(tasks), 2)
+        self.assertEqual(tasks[0]["task"], "task1")
+        self.assertEqual(tasks[0]["complete"], True)
+        self.assertEqual(tasks[1]["task"], "task2")
 
     def test_load_tasks(self):
         main.main(["task1", "task2"])
         with open("todo.txt", "r") as f:
-            tasks = f.readlines()
-        self.assertEqual(tasks[0].strip(), "task1\n")
-        self.assertEqual(tasks[1].strip(), "task2\n")
+            tasks = json.load(f)
+        self.assertEqual(len(tasks), 2)
+        self.assertEqual(tasks[0]["task"], "task1")
+        self.assertEqual(tasks[1]["task"], "task2")
 
     def test_clear_list(self):
         main.main(["task1", "task2"])
         main.main()
         with open("todo.txt", "r") as f:
-            tasks = f.readlines()
+            tasks = json.load(f)
         self.assertEqual(len(tasks), 0)
 
     def test_no_tasks_provided(self):
@@ -50,14 +55,32 @@ class TestMain(unittest.TestCase):
         main.main(["task1", "task2"])
         main.main("-c 5 task1")
         with open("todo.txt", "r") as f:
-            tasks = f.readlines()
-        self.assertEqual(tasks[0].strip(), "task1\n")
-        self.assertEqual(tasks[1].strip(), "task2\n")
+            tasks = json.load(f)
+        self.assertEqual(len(tasks), 2)
+        self.assertEqual(tasks[0]["task"], "task1")
+        self.assertEqual(tasks[1]["task"], "task2")
 
     def test_complete_task_invalid_number(self):
         main.main(["task1", "task2"])
         main.main("-c abc task1")
         with open("todo.txt", "r") as f:
-            tasks = f.readlines()
-        self.assertEqual(tasks[0].strip(), "task1\n")
-        self.assertEqual(tasks[1].strip(), "task2\n")
+            tasks = json.load(f)
+        self.assertEqual(len(tasks), 2)
+        self.assertEqual(tasks[0]["task"], "task1")
+        self.assertEqual(tasks[1]["task"], "task2")
+
+    def test_add_task_with_priority(self):
+        main.main(["task1", "--priority High"])
+        with open("todo.txt", "r") as f:
+            tasks = json.load(f)
+        self.assertEqual(len(tasks), 1)
+        self.assertEqual(tasks[0]["task"], "task1")
+        self.assertEqual(tasks[0]["priority"], "High")
+
+    def test_filter_by_priority(self):
+        main.main(["task1", "task2", "--priority High"])
+        with open("todo.txt", "r") as f:
+            tasks = json.load(f)
+        self.assertEqual(len(tasks), 1)
+        self.assertEqual(tasks[0]["task"], "task1")
+        self.assertEqual(tasks[0]["priority"], "High")
